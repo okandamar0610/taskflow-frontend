@@ -14,17 +14,17 @@ on:
 jobs:
   build:
     outputs:
-      artifact-id: backend-artifact-${{ cloudbees.version }}
+      artifact-id: frontend-artifact-${{ cloudbees.version }}
       version: ${{ cloudbees.version }}
     steps:
       - name: Check out
         uses: cloudbees-io/checkout@v2
 
-      - name: Install dependencies and run tests
-        uses: docker://python:3.11-slim
+      - name: Install and build
+        uses: docker://node:18-slim
         run: |
-          pip install -r requirements.txt
-          pytest -v
+          npm install
+          npm run build
 
       - name: Register build artifact
         uses: cloudbees-io/register-build-artifacts@main
@@ -32,9 +32,9 @@ jobs:
           artifact-metadata: |
             [
               {
-                "name": "docker.io/mock/backend",
+                "name": "docker.io/mock/frontend",
                 "version": "${{ cloudbees.version }}",
-                "url": "docker.io/mock/backend:${{ cloudbees.version }}",
+                "url": "docker.io/mock/frontend:${{ cloudbees.version }}",
                 "type": "docker"
               }
             ]
